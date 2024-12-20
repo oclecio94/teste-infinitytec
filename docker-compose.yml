@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   nest-api:
     build:
@@ -7,21 +8,26 @@ services:
     container_name: nest-api
     restart: always
     ports:
-      - 3000:3000
+      - '3000:3000'
     depends_on:
       - postgres
     env_file:
       - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
 
   postgres:
     image: postgres:latest
     container_name: postgresprisma
     ports:
-      - 5432:5432
+      - '5432:5432'
     env_file:
       - .env
     volumes:
       - postgres:/var/lib/postgresql/data
+    restart: always
 
 volumes:
   postgres:
