@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
 import { BullModule } from '@nestjs/bull';
 import { TransactionQueueProcessor } from './modules/transaction/transaction.queue';
+import { BullBoardModule } from './modules/bull-board/bull-board.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TransactionQueueProcessor } from './modules/transaction/transaction.que
     PrismaModule,
     AuthModule,
     TransactionModule,
+    BullBoardModule,
   ],
   controllers: [AppController],
   providers: [AppService, TransactionQueueProcessor],
