@@ -33,6 +33,13 @@ model Transaction {
   targetUser User? @relation("TargetUser", fields: [targetUserId], references: [id])
 }
 
+model DailyReport {
+  id         String   @id @default(uuid())
+  reportDate DateTime
+  content    Json   
+  createdAt  DateTime @default(now())
+}
+
 enum TransactionType {
   DEPOSIT // Depósito
   WITHDRAWAL // Saque
