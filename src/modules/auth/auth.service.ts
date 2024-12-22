@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/database/prisma.service';
 import { compare, hash } from 'bcrypt';
@@ -8,7 +8,7 @@ import { signinDTO, signupDTO } from './auth.dto';
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async signUp(data: signupDTO) {
@@ -18,13 +18,10 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new HttpException(
-        {
-          success: false,
-          message: 'user already exists',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException({
+        success: false,
+        message: 'user already exists',
+      });
     }
 
     const hashedPassword = await hash(password, 10);
@@ -47,25 +44,19 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      throw new HttpException(
-        {
-          success: false,
-          message: 'not authorized',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new BadRequestException({
+        success: false,
+        message: 'not authorized',
+      });
     }
 
     const isEqualPassword = await compare(password, user.password);
 
     if (!isEqualPassword) {
-      throw new HttpException(
-        {
-          success: false,
-          message: 'not authorized',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new BadRequestException({
+        success: false,
+        message: 'not authorized',
+      });
     }
 
     const payload = {
