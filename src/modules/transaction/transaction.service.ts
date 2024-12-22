@@ -1,105 +1,63 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import { TransactionType } from '@prisma/client';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectQueue('transactions') private readonly transactionQueue: Queue, // Injeta a fila
+  ) {}
 
   async deposit(userId: string, amount: number) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
+    if (amount <= 0) {
       throw new BadRequestException({
         success: false,
-        message: 'user not found',
+        message: 'the deposit amount must be positive',
       });
     }
-    if (amount <= 0) {
-      throw new BadRequestException('the deposit amount must be positive');
-    }
 
-    const transaction = await this.prisma.transaction.create({
-      data: {
-        type: TransactionType.DEPOSIT,
-        amount,
-        userId,
-      },
+    await this.transactionQueue.add('processTransaction', {
+      type: TransactionType.DEPOSIT,
+      userId,
+      amount,
     });
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { balance: { increment: amount } },
-    });
-
-    return transaction;
+    return { success: true, message: 'Deposit job added to queue' };
   }
 
   async withdraw(userId: string, amount: number) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
+    if (amount <= 0) {
       throw new BadRequestException({
         success: false,
-        message: 'user not found',
+        message: 'the withdrawal amount must be positive',
       });
     }
 
-    if (user.balance < amount) {
-      throw new BadRequestException('insufficient balance');
-    }
-
-    const transaction = await this.prisma.transaction.create({
-      data: {
-        type: TransactionType.WITHDRAWAL,
-        amount,
-        userId,
-      },
+    await this.transactionQueue.add('processTransaction', {
+      type: TransactionType.WITHDRAWAL,
+      userId,
+      amount,
     });
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { balance: { decrement: amount } },
-    });
-
-    return transaction;
+    return { success: true, message: 'Withdrawal job added to queue' };
   }
 
   async transfer(userId: string, targetUserId: string, amount: number) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-
-    const targetUser = await this.prisma.user.findUnique({
-      where: { id: targetUserId },
-    });
-
-    if (!user || !targetUser) {
+    if (amount <= 0) {
       throw new BadRequestException({
         success: false,
-        message: 'user not found',
+        message: 'the transfer amount must be positive',
       });
     }
 
-    if (user.balance < amount) {
-      throw new BadRequestException('insufficient balance');
-    }
-
-    const transaction = await this.prisma.transaction.create({
-      data: {
-        type: TransactionType.TRANSFER,
-        amount,
-        userId,
-        targetUserId,
-      },
+    await this.transactionQueue.add('processTransaction', {
+      type: TransactionType.TRANSFER,
+      userId,
+      targetUserId,
+      amount,
     });
 
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { balance: { decrement: amount } },
-    });
-
-    await this.prisma.user.update({
-      where: { id: targetUserId },
-      data: { balance: { increment: amount } },
-    });
-
-    return transaction;
+    return { success: true, message: 'Transfer job added to queue' };
   }
 }
