@@ -23,7 +23,7 @@ export class TransactionService {
       amount,
     });
 
-    return { success: true, message: 'Deposit job added to queue' };
+    return { success: true, message: 'operation requested successfully' };
   }
 
   async withdraw(userId: string, amount: number) {
@@ -40,7 +40,7 @@ export class TransactionService {
       amount,
     });
 
-    return { success: true, message: 'Withdrawal job added to queue' };
+    return { success: true, message: 'operation requested successfully' };
   }
 
   async transfer(userId: string, targetUserId: string, amount: number) {
@@ -58,6 +58,6 @@ export class TransactionService {
       amount,
     });
 
-    return { success: true, message: 'Transfer job added to queue' };
+    return { success: true, message: 'operation requested successfully' };
   }
 }

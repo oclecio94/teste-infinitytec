@@ -3,8 +3,9 @@ import { AuthService } from './auth.service';
 import { signinDTO, signupDTO } from './auth.dto';
 import { ZodValidation } from 'src/validation/zod.validation';
 import { SignInSchema, SignUpSchema } from './auth.validation';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
