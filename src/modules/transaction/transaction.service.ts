@@ -6,7 +6,7 @@ import { Queue } from 'bull';
 @Injectable()
 export class TransactionService {
   constructor(
-    @InjectQueue('transactions') private readonly transactionQueue: Queue, // Injeta a fila
+    @InjectQueue('transactions') private readonly transactionQueue: Queue,
   ) {}
 
   async deposit(userId: string, amount: number) {

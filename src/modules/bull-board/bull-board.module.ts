@@ -6,11 +6,14 @@ import { ExpressAdapter } from '@bull-board/express';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 
 @Module({
-  imports: [BullModule.registerQueue({ name: 'transactions' })], // Importando e registrando a fila
+  imports: [
+    BullModule.registerQueue({ name: 'transactions' }, { name: 'report' }),
+  ],
 })
 export class BullBoardModule implements NestModule {
   constructor(
     @InjectQueue('transactions') private readonly transactionQueue: Queue,
+    @InjectQueue('report') private readonly reportQueue: Queue,
   ) {}
 
   configure(consumer: MiddlewareConsumer) {
@@ -18,7 +21,10 @@ export class BullBoardModule implements NestModule {
     serverAdapter.setBasePath('/admin/queues');
 
     createBullBoard({
-      queues: [new BullAdapter(this.transactionQueue)],
+      queues: [
+        new BullAdapter(this.transactionQueue),
+        new BullAdapter(this.reportQueue),
+      ],
       serverAdapter,
     });
 
