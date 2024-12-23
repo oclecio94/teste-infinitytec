@@ -1,73 +1,175 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Projeto de Teste Técnico - Desenvolvedor Full Stack
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este é um projeto desenvolvido como parte de um teste técnico para a vaga de desenvolvedor Full Stack com foco em backend. Ele inclui funcionalidades de autenticação, um sistema de transações financeiras, gerenciamento de filas com BullMQ, documentação com Swagger, e suporte para execução local e via Docker.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Estrutura do projeto
 
-## Description
+- src/modules/auth: Módulo de autenticação.
+- src/modules/transaction: Módulo de transações financeiras.
+- src/modules/report: Módulo de relatórios.
+- src/modules/bull-board: Módulo do painel de filas.
+- prisma/schema.prisma: Configuração do banco de dados.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Funcionalidades
 
-## Installation
+### 1. Autenticação
 
-```bash
-$ npm install
-```
+- Registro de usuários (`POST /auth/signup`)
+- Login (`POST /auth/signin`)
 
-## Running the app
+### 2. Sistema de Transações
 
-```bash
-# development
-$ npm run start
+- Depósito: Adicionar valores ao saldo do usuário (`POST /transaction/deposit/:userId`, corpo: `{ "amount": number }`)
+- Saque: Remover valores do saldo do usuário (`POST /transaction/withdraw/:userId`, corpo: `{ "amount": number }`)
+- Transferência: Transferir valores entre usuários (`POST /transaction/transfer/:userId/:targetUserId`, corpo: `{ "amount": number }`)
 
-# watch mode
-$ npm run start:dev
+### 3. Gerenciamento de Filas
 
-# production mode
-$ npm run start:prod
-```
+- BullMQ processa transações de forma assíncrona.
+- Geração de relatórios diários.
+- Painel de monitoramento Bull-Board acessível em `/admin/queues`.
 
-## Test
+### 4. Documentação das Rotas
 
-```bash
-# unit tests
-$ npm run test
+- Documentação com Swagger disponível em `/docs`.
 
-# e2e tests
-$ npm run test:e2e
+### 5. Seeds para Banco de Dados
 
-# test coverage
-$ npm run test:cov
-```
+- Seeds para popular o banco de dados com dados de exemplo.
+- Rodar com o comando: `npm run seed`.
 
-## Support
+## Tecnologias Utilizadas
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **NestJS**: Framework backend.
+- **TypeScript**: Linguagem utilizada.
+- **PostgreSQL**: Banco de dados relacional.
+- **BullMQ**: Gerenciamento de filas.
+- **Swagger**: Documentação de rotas.
+- **Docker**: Containerização.
 
-## Stay in touch
+## Configuração do Projeto
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- obs: se estiver usando o redis localmente no app.module coloque "localhost", se estiver usando docker coloque "redis"
+- e no postgres local na variável de ambiente DATABASE_URL coloque "localhost", se estiver usando docker coloque "postgres"
 
-## License
+### 1. Rodando Localmente
 
-Nest is [MIT licensed](LICENSE).
+#### Pré-requisitos
+
+- Node.js (versão 20+)
+- Gerenciador de pacotes `npm`
+- PostgreSQL
+- Redis
+
+#### Passos
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/oclecio94/teste-infinitytec.git
+   cd teste-infinitytec
+   ```
+
+2. Instale as dependências:
+
+   ```bash
+   npm install
+   ```
+
+3. Configure as variáveis de ambiente:
+
+#### Crie um arquivo .env na raiz do projeto com as seguintes variáveis
+
+- POSTGRES_USER=
+- POSTGRES_PASSWORD
+- POSTGRES_DB=
+- DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+- SECRET_KEY=
+
+4. Rode as migrations:
+
+   ```bash
+   npm run prisma:migrate
+   ```
+
+5. Popule o banco de dados com dados de exemplo:
+
+   ```bash
+   npm run seed
+   ```
+
+6. Inicie o servidor:
+
+   ```bash
+   npm run start:dev
+   ```
+
+7. Acesse a aplicação:
+
+- Swagger: http://localhost:3000/docs
+- Bull-Board: http://localhost:3000/admin/queues
+
+### 2. Rodando com Docker
+
+#### Pré-requisitos
+
+- Docker
+- Docker Compose
+
+#### Passos
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/oclecio94/teste-infinitytec.git
+   cd teste-infinitytec
+   ```
+
+2. Configure as variáveis de ambiente:
+
+#### Crie um arquivo .env na raiz do projeto com as seguintes variáveis
+
+- POSTGRES_USER=
+- POSTGRES_PASSWORD
+- POSTGRES_DB=
+- DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+- SECRET_KEY=
+
+3. Suba os containers:
+
+   ```bash
+   docker-compose up
+   ```
+
+4. Após subir os containers, você pode rodar as migrations e seeds utilizando os comandos abaixo. Certifique-se de que o container da aplicação esteja em execução.
+
+   ```bash
+   docker exec -it nest-api sh
+   ```
+
+5. Rode as migrations:
+
+   ```bash
+   npm run prisma:migrate
+   ```
+
+6. Popule o banco de dados com dados de exemplo:
+
+   ```bash
+   npm run seed
+   ```
+
+7. Inicie o servidor:
+
+   ```bash
+   npm run start:dev
+   ```
+
+8. Acesse a aplicação:
+
+- Swagger: http://localhost:3000/docs
+- Bull-Board: http://localhost:3000/admin/queues
+
+### 2. Deploy online
+
+- url: http://api.com.br
