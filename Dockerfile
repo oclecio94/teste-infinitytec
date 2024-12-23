@@ -8,7 +8,9 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 
-RUN npx prisma generate
+RUN npx prisma generate && \
+    npm run prisma:migrate && \
+    npm run seed
 
 EXPOSE 3000
 
