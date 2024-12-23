@@ -169,7 +169,3 @@ Este é um projeto desenvolvido como parte de um teste técnico para a vaga de d
 
 - Swagger: http://localhost:3000/docs
 - Bull-Board: http://localhost:3000/admin/queues
-
-### 2. Deploy online
-
-- url: http://api.com.br
