@@ -23,7 +23,7 @@ services:
     image: postgres:latest
     container_name: postgresprisma
     ports:
-      - '5438:5432'
+      - '5432:5432'
     env_file:
       - .env
     volumes:
